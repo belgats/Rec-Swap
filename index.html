@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rec-Swap</title>
+<style>
+:root{--bg:#faf7f8;--card:#fff;--tx:#1d1a1c;--mu:#6b6468;--bd:#e5dde0;--ac:#8a1538;--ok:#2f7d6d;--no:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17131a;--card:#221c25;--tx:#f1eaee;--mu:#a99ea4;--bd:#3a3040;--ac:#e0597f;--ok:#4fb59f;--no:#f0847c}}
+:root[data-theme="dark"]{--bg:#17131a;--card:#221c25;--tx:#f1eaee;--mu:#a99ea4;--bd:#3a3040;--ac:#e0597f;--ok:#4fb59f;--no:#f0847c}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:1000px;margin:auto;padding:16px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:0 0 8px}.mu{color:var(--mu);font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:12px 0}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1 1 200px}
+select,button{font:inherit;padding:8px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+select{width:100%}button{cursor:pointer}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.pc{border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:center}
+.pc svg{width:96px;height:108px}.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--bd);margin:4px 0}
+.gray svg{filter:grayscale(1);opacity:.5}.un{color:var(--no);font-weight:600}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+.sl{display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0}.sl input[type=range]{flex:1}.sl span{min-width:150px}
+.ok{color:var(--ok)}.no{color:var(--no)}.big{font-size:24px;font-weight:700}
+</style></head><body><div id="app"></div>
+<script type="module">
+const CATALOG=await fetch("/catalog.json").then(r=>{if(!r.ok)throw Error("Could not load the product catalogue");return r.json()});
+const I=CATALOG.products,U=CATALOG.users;
+const $=id=>document.getElementById(id);
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const put=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const D={period:"normal",temp:34,hour:14,rules:{heat:1,price:1,stock:1,season:1,promo:1},w:{t:.35,v:.15,a:.25,h:.25}};
+let ctx=load("rs3",D);ctx={...D,...ctx,rules:{...D.rules,...ctx.rules},w:{...D.w,...ctx.w}};
+let LOG=load("rs3log",[]);
+/* image: generated SVG pack shot */
+function svgImg(i){const c=`hsl(${i.h} 60% 52%)`,d=`hsl(${i.h} 60% 32%)`;
+ const S={carton:`<path d="M20 22l12-14 12 14v48H20z" fill="${c}"/>`,bottle:`<rect x="26" y="6" width="12" height="12" rx="2" fill="${d}"/><rect x="19" y="18" width="26" height="52" rx="9" fill="${c}"/>`,tub:`<rect x="12" y="32" width="40" height="38" rx="6" fill="${c}"/><rect x="10" y="24" width="44" height="10" rx="4" fill="${d}"/>`,bag:`<path d="M14 14h36l5 56H9z" fill="${c}"/><path d="M14 14h36" stroke="${d}" stroke-width="5"/>`,box:`<rect x="10" y="20" width="44" height="50" rx="3" fill="${c}"/><rect x="10" y="20" width="44" height="9" fill="${d}"/>`,pack:`<rect x="6" y="30" width="16" height="40" rx="6" fill="${c}"/><rect x="24" y="30" width="16" height="40" rx="6" fill="${d}"/><rect x="42" y="30" width="16" height="40" rx="6" fill="${c}"/>`}[i.k];
+ return`<svg viewBox="0 0 64 76" role="img" aria-label="${i.n}">${S}<rect x="19" y="42" width="26" height="15" rx="2" fill="#fff" opacity=".92"/><text x="32" y="52" font-size="5.5" text-anchor="middle" fill="${d}" font-family="sans-serif" font-weight="700">${i.b.slice(0,8)}</text></svg>`}
+let IMGS={};
+function img(i){const u=IMGS[i.id];return u?`<img src="${u}" alt="${i.n}" loading="lazy" style="width:96px;height:108px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none">${svgImg(i)}</span>`:svgImg(i)}
+fetch("images.json").then(r=>r.json()).then(j=>{IMGS=j;render()}).catch(()=>{});
+/* ranker */
+const tok=i=>(i.n+" "+i.d+" "+i.t.join(" ")).toLowerCase().match(/[a-z]+/g),df={};
+I.forEach(i=>new Set(tok(i)).forEach(w=>df[w]=(df[w]||0)+1));
+I.forEach(i=>{const m={};tok(i).forEach(w=>m[w]=(m[w]||0)+Math.log(1+I.length/df[w]));i.e=m});
+const cos=(a,b)=>{let d=0,x=0,y=0;for(const k in a){x+=a[k]**2;if(b[k])d+=a[k]*b[k]}for(const k in b)y+=b[k]**2;return d/Math.sqrt(x*y||1)};
+const sim=(a,b)=>1-Math.min(1,Math.abs(a-b)/Math.max(a,b));
+function parts(u,t,c){const dh=Math.abs(t.h-c.h),v=.6*(1-Math.min(dh,360-dh)/180)+.4*(t.k==c.k);
+ const j=t.t.filter(x=>c.t.includes(x)).length/new Set([...t.t,...c.t]).size;
+ const a=.35*(t.c==c.c)+.3*sim(t.p,c.p)+.15*sim(t.s,c.s)+.2*j;let h=0;
+ if(u){const H=u.h.map(i=>I.find(x=>x.id==i)),br=Math.min(1,H.filter(x=>x.b==c.b).length/2),
+  tg=c.t.reduce((s,g)=>s+Math.min(1,H.filter(x=>x.t.includes(g)).length/2),0)/c.t.length,
+  sa=H.filter(x=>x.a==c.a),pf=sa.length?sim(sa.reduce((s,x)=>s+x.p,0)/sa.length,c.p):.5;
+  h=.3*br+.3*tg+.2*pf+.2*u.h.includes(c.id)}
+ return{t:cos(t.e,c.e),v,a,h}}
+function rank(u,t,w){const ww=u?w:{...w,h:0},S=ww.t+ww.v+ww.a+ww.h||1;
+ return I.filter(c=>c.a==t.a&&c.id!=t.id&&c.st>0&&!(u&&u.ex.some(e=>c.t.includes(e)))).map(c=>{const p=parts(u,t,c);
+  return{c,p,w:ww,s:(ww.t*p.t+ww.v*p.v+ww.a*p.a+ww.h*p.h)/S}}).sort((x,y)=>y.s-x.s)}
+/* policy agent: re-checks ranker candidates against business context */
+function agent(R,t,x){const r=x.rules,all=R.slice(0,8).map((e,i)=>{const c=e.c;let d=0,why=[],rej=null;
+ const veto=(code,msg)=>{if(!rej)rej={code,msg}};
+ if(r.heat&&x.temp>=38&&c.a=="dairy"&&x.hour>=11&&x.hour<=16)veto("heat","Chilled item, heat risk for a midday delivery");
+ if(r.price&&c.p>1.6*t.p)veto("price","Price more than 60% above the original");
+ if(r.stock&&c.st<10)veto("stock","Low stock ("+c.st+" left)");
+ if(r.season){if(x.period=="ramadan"&&["dates","drink","water"].includes(c.c)){d+=.08;why.push("Ramadan favourite")}
+  if(x.period=="eid"&&["dates","coffee"].includes(c.c)){d+=.08;why.push("Eid hospitality pick")}
+  if(x.period=="national"&&c.t.includes("local")){d+=.06;why.push("Local brand for National Day")}
+  if(x.temp>=35&&["water","juice","drink"].includes(c.c)){d+=.06;why.push("Refreshing in today’s heat")}}
+ if(r.promo&&c.promo){d+=.03;why.push("Featured offer")}
+ return{...e,rk:i+1,d,f:e.s+d,rej,why}});
+ return{all,ok:all.filter(e=>!e.rej).sort((a,b)=>b.f-a.f)}}
+const NM={t:"Very similar product",v:"Looks alike on the shelf",a:"Similar price and size",h:"Matches what you usually buy"};
+const why=e=>e.why[0]||NM[Object.keys(NM).sort((a,b)=>e.w[b]*e.p[b]-e.w[a]*e.p[a])[0]];
+/* views */
+let view=location.hash.slice(1),cu=0,ct=1,mu=0,mt=1;
+const opts=(a,f,s)=>a.map((x,i)=>`<option value="${f(x,i)}" ${f(x,i)==s?"selected":""}>${x.n}</option>`).join("");
+function render(){view=="customer"?cust():view=="manager"?mgr():home()}
+function home(){$("app").innerHTML=`<h1>Rec-Swap</h1><div class="mu">Substitution recommender for a Qatari grocery delivery platform. Demo with dummy data.</div>
+<div class="g" style="margin-top:12px"><div class="card"><h2>Customer view</h2><div class="mu">What a shopper sees when an item runs out.</div><p><button class="p" id="b1">Open</button></p></div>
+<div class="card"><h2>Manager view</h2><div class="mu">Monitor the ranker, the policy agent and shopper feedback.</div><p><button class="p" id="b2">Open</button></p></div></div>`;
+ $("b1").onclick=()=>{view="customer";render()};$("b2").onclick=()=>{view="manager";render()}}
+function cust(){const userIndex=cu,itemId=ct,u=U[userIndex],t=I.find(i=>i.id==itemId),R=rank(u,t,ctx.w);let A=agent(R,t,ctx).ok.slice(0,3);
+ $("app").innerHTML=`<h1>Your order</h1><div class="mu">Delivery to Doha today at ${ctx.hour}:00 · ${ctx.temp}°C</div>
+ <div class="card row"><label class="mu">Signed in as<select id="cu">${opts(U,(x,i)=>i,cu)}</select></label><label class="mu">Demo: item that runs out<select id="ct">${opts(I,x=>x.id,ct)}</select></label></div>
+ <div class="card"><div class="row" style="align-items:center"><div class="gray" style="flex:0 0 110px">${img(t)}</div><div><div class="un">Unavailable</div><b>${t.n}</b><div class="mu">${t.p} QAR · we picked replacements for you</div></div></div></div>
+ <h2>Suggested replacements</h2><div class="mu" id="model-status" role="status" aria-live="polite"></div><div class="g" id="suggestions"></div><div class="mu" id="feedback-status" role="status" aria-live="polite"></div>`;
+ const draw=()=>{$("suggestions").innerHTML=A.map((e,i)=>{const dp=e.c.p-t.p;return`<div class="pc">${img(e.c)}<div><b>${e.c.n}</b></div><div>${e.c.p} QAR <span class="mu">(${dp>0?"+":""}${dp.toFixed(1)})</span></div><div class="tag">${e.reason||why(e)}</div><div><button class="p" data-a="1" data-i="${i}">Swap</button> <button data-a="0" data-i="${i}">No thanks</button></div></div>`}).join("")||'<div class="mu">No suitable replacement today. We will refund this item.</div>';
+ document.querySelectorAll(".pc button").forEach(b=>b.onclick=async()=>{const e=A[+b.dataset.i],accepted=b.dataset.a==="1",position=+b.dataset.i+1;
+  LOG.push({u:u.n,t:t.id,c:e.c.id,a:Number(accepted),pos:position});put("rs3log",LOG);b.parentNode.innerHTML=accepted?'<b class="ok">Swapped ✓</b>':'<span class="mu">Skipped</span>';
+  try{const response=await fetch("/api/feedback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userIndex,itemId,candidateId:e.c.id,accepted,position})});
+   if(response.status!==404&&!response.ok)throw Error("Shared feedback could not be saved");
+   if(response.ok)$("feedback-status").textContent="Feedback saved for the shared manager dashboard."}
+  catch(error){$("feedback-status").textContent="Feedback is saved in this browser, but could not be sent to the shared manager dashboard."}})};
+ $("cu").onchange=e=>{cu=+e.target.value;cust()};$("ct").onchange=e=>{ct=+e.target.value;cust()};draw();
+ fetch("/api/recommendations",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({userIndex,itemId,weights:ctx.w,context:{temp:ctx.temp,hour:ctx.hour,rules:ctx.rules}})})
+  .then(async response=>{if(response.status===404){$("model-status").textContent="Local demo ranker (Cloudflare AI is available after deployment).";return null}
+   const body=await response.json();if(!response.ok)throw Error(body.error||"AI inference failed");return body})
+  .then(result=>{if(!result||cu!==userIndex||ct!==itemId)return;
+   const allowed=new Set(agent(R,t,ctx).ok.map(entry=>entry.c.id)),byId=new Map(R.map(entry=>[entry.c.id,entry]));
+   A=result.items.filter(item=>allowed.has(item.id)).map(item=>{const entry=byId.get(item.id);return entry?{...entry,reason:item.reason}:null}).filter(Boolean);
+   $("model-status").textContent=`AI inference · ${result.model}`;draw()})
+  .catch(()=>{if(cu===userIndex&&ct===itemId)$("model-status").textContent="AI inference unavailable; showing local demo recommendations."})}
+addEventListener("storage",()=>{if(view=="customer"){ctx=load("rs3",ctx);cust()}});
+function mgr(){$("app").innerHTML=`<h1>Manager view</h1><div class="mu">Business context and rules feed the policy agent. Changes apply instantly to the customer view.</div>
+<div class="card"><h2>Business context</h2><div class="row"><label class="mu">Period<select id="pe">${[["normal","Normal"],["ramadan","Ramadan"],["eid","Eid"],["national","National Day"]].map(([v,l])=>`<option value="${v}" ${ctx.period==v?"selected":""}>${l}</option>`).join("")}</select></label>
+<div><div class="sl"><span>Temperature °C</span><input type="range" id="tp" min="15" max="50" value="${ctx.temp}"><b id="tpv">${ctx.temp}</b></div><div class="sl"><span>Delivery hour</span><input type="range" id="hr" min="8" max="23" value="${ctx.hour}"><b id="hrv">${ctx.hour}</b></div></div></div>
+<div class="row mu" style="margin-top:8px">${[["heat","Heat guard"],["price","Price-shock guard"],["stock","Low-stock guard"],["season","Season boosts"],["promo","Promo boost"]].map(([k,l])=>`<label><input type="checkbox" data-r="${k}" ${ctx.rules[k]?"checked":""}> ${l}</label>`).join("")}</div>
+<h2 style="margin-top:12px">Local simulator weights</h2><div class="mu">The customer AI path uses text embeddings, attributes and history; image is a local proxy only.</div>${[["t","Text"],["v","Image proxy"],["a","Attributes"],["h","History"]].map(([k,l])=>`<div class="sl"><span>${l}</span><input type="range" min="0" max="1" step=".05" data-w="${k}" value="${ctx.w[k]}"><b id="w${k}">${ctx.w[k]}</b></div>`).join("")}</div>
+<div class="card"><h2>Scenario inspector</h2><div class="row"><select id="mu">${opts(U,(x,i)=>i,mu)}</select><select id="mt">${opts(I,x=>x.id,mt)}</select></div><div class="tw" id="ins"></div></div>
+<div class="card"><h2>Simulation across all shopper and item scenarios</h2><div id="sim"></div></div>
+<div class="card"><h2>History influence (ranker only)</h2><div class="tw" id="cmp"></div></div>
+<div class="card"><h2>Customer feedback (this browser)</h2><div class="tw" id="fb"></div><p><button id="clr">Reset local log</button></p></div>
+<div class="card"><h2>Shared cloud feedback</h2><div class="tw" id="cloud-fb">Loading shared feedback…</div></div>`;
+ const sv=()=>{put("rs3",ctx);mdraw()};
+ $("pe").onchange=e=>{ctx.period=e.target.value;sv()};
+ $("tp").oninput=e=>{ctx.temp=+e.target.value;$("tpv").textContent=ctx.temp;sv()};$("hr").oninput=e=>{ctx.hour=+e.target.value;$("hrv").textContent=ctx.hour;sv()};
+ document.querySelectorAll("[data-r]").forEach(e=>e.onchange=()=>{ctx.rules[e.dataset.r]=+e.checked;sv()});
+ document.querySelectorAll("[data-w]").forEach(e=>e.oninput=()=>{ctx.w[e.dataset.w]=+e.value;$("w"+e.dataset.w).textContent=e.value;sv()});
+ $("mu").onchange=e=>{mu=+e.target.value;mdraw()};$("mt").onchange=e=>{mt=+e.target.value;mdraw()};
+ $("clr").onclick=()=>{LOG=[];put("rs3log",LOG);mdraw()};mdraw();loadCloudFeedback()}
+function mdraw(){const u=U[mu],t=I.find(i=>i.id==mt),R=rank(u,t,ctx.w),A=agent(R,t,ctx);let n=0;
+ $("ins").innerHTML="<table><tr><th>Ranker #</th><th>Candidate</th><th>Ranker score</th><th>Agent Δ</th><th>Final</th><th>Decision</th><th>Reason</th></tr>"+A.all.map(e=>{const k=A.ok.indexOf(e);
+  return`<tr><td>${e.rk}</td><td>${e.c.n}</td><td>${e.s.toFixed(3)}</td><td>${e.d?"+"+e.d.toFixed(2):"–"}</td><td>${e.f.toFixed(3)}</td><td class="${e.rej?"no":"ok"}">${e.rej?"Rejected":"Approved #"+(k+1)}</td><td>${e.rej?e.rej.msg:e.why.join(", ")||"Relevance only"}</td></tr>`}).join("")+"</table>";
+ let N=0,ch=0,hc=0,rc={heat:0,price:0,stock:0};
+ U.forEach(x=>I.forEach(it=>{const r=rank(x,it,ctx.w);if(!r.length)return;N++;const a=agent(r,it,ctx);
+  if(a.ok[0]&&a.ok[0].c.id!=r[0].c.id)ch++;a.all.slice(0,3).forEach(e=>{if(e.rej)rc[e.rej.code]++});if(rank(null,it,ctx.w)[0].c.id!=r[0].c.id)hc++}));
+ $("sim").innerHTML=`<div class="row"><div><div class="big">${(100*ch/N).toFixed(0)}%</div><div class="mu">scenarios where the agent changed the top-1 pick (${N} total)</div></div><div><div class="big">${rc.heat+rc.price+rc.stock}</div><div class="mu">top-3 candidates vetoed: heat ${rc.heat}, price ${rc.price}, stock ${rc.stock}</div></div><div><div class="big">${(100*hc/N).toFixed(0)}%</div><div class="mu">scenarios where history changed the top-1 vs cold-start</div></div></div>`;
+ const cold=rank(null,t,ctx.w),cn=cold.map(r=>r.c.id);
+ $("cmp").innerHTML="<table><tr><th>Shopper</th><th>Cold-start top 1</th><th>Personalised top 1</th><th>Top-3 overlap</th><th>Mean rank shift</th></tr>"+U.map(x=>{const p=rank(x,t,ctx.w),pn=p.map(r=>r.c.id);
+  return`<tr><td>${x.n}</td><td>${cold[0]?.c.n||"–"}</td><td>${p[0]?.c.n||"–"}</td><td>${pn.slice(0,3).filter(i=>cn.slice(0,3).includes(i)).length}/3</td><td>${(pn.reduce((s,i,k)=>s+Math.abs(k-cn.indexOf(i)),0)/(pn.length||1)).toFixed(2)}</td></tr>`}).join("")+"</table>";
+ const g={},pz={};LOG.forEach(e=>{g[e.u]=g[e.u]||[0,0];g[e.u][0]++;g[e.u][1]+=e.a;pz[e.pos]=pz[e.pos]||[0,0];pz[e.pos][0]++;pz[e.pos][1]+=e.a});
+ $("fb").innerHTML=LOG.length?"<table><tr><th>Group</th><th>Responses</th><th>Swaps</th><th>Acceptance</th></tr>"+Object.entries(g).map(([k,v])=>`<tr><td>${k}</td><td>${v[0]}</td><td>${v[1]}</td><td>${(100*v[1]/v[0]).toFixed(0)}%</td></tr>`).join("")+Object.entries(pz).map(([k,v])=>`<tr><td>Shown at position ${k}</td><td>${v[0]}</td><td>${v[1]}</td><td>${(100*v[1]/v[0]).toFixed(0)}%</td></tr>`).join("")+"</table>":'<div class="mu">No feedback yet. Open the customer view and press Swap or No thanks.</div>';
+}
+function loadCloudFeedback(){fetch("/api/feedback").then(async response=>{if(response.status===404){$("cloud-fb").textContent="Shared metrics appear after Cloudflare Pages and D1 are configured.";return}
+  const body=await response.json();if(!response.ok)throw Error(body.error||"Could not load shared feedback");
+  $("cloud-fb").innerHTML=body.positions.length?"<table><tr><th>Shown at position</th><th>Responses</th><th>Swaps</th><th>Acceptance</th></tr>"+body.positions.map(row=>`<tr><td>${row.position}</td><td>${row.responses}</td><td>${row.accepted}</td><td>${(100*row.accepted/row.responses).toFixed(0)}%</td></tr>`).join("")+"</table>":'<div class="mu">No shared feedback has been recorded yet.</div>'})
+  .catch(()=>{$("cloud-fb").textContent="Shared feedback is temporarily unavailable."})}
+render();
+</script></body></html>

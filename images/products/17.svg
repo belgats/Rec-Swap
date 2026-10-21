@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180" role="img" aria-labelledby="title">
+  <title id="title">Illustration of a bottled-water multipack, not a product photo</title>
+  <rect x="24" y="52" width="112" height="99" rx="10" fill="#e8f5fb" stroke="#6d9fb3" stroke-width="3"/>
+  <g stroke="#5687a0" stroke-width="2">
+    <path d="M41 43h12v10H41zM39 53h16v78H39z" fill="#b9e5f2"/>
+    <path d="M74 43h12v10H74zM72 53h16v78H72z" fill="#b9e5f2"/>
+    <path d="M107 43h12v10h-12zM105 53h16v78h-16z" fill="#b9e5f2"/>
+  </g>
+  <path d="M39 79h16v17H39zM72 79h16v17H72zM105 79h16v17h-16z" fill="#fff" stroke="#a5cad8"/>
+  <text x="80" y="145" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#376579">BOTTLED WATER</text>
+  <text x="80" y="164" text-anchor="middle" font-family="sans-serif" font-size="8" font-weight="700" fill="#376579">DEMO ILLUSTRATION</text>
+</svg>

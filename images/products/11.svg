@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180" role="img" aria-labelledby="title">
+  <title id="title">Illustration of a medium-grain rice bag, not a product photo</title>
+  <path d="M38 20h84l9 18-5 116H34L29 38z" fill="#d9bd88" stroke="#8c7045" stroke-width="3"/>
+  <path d="M38 20h84M32 43h96" fill="none" stroke="#8c7045" stroke-width="3"/>
+  <rect x="42" y="58" width="76" height="67" rx="5" fill="#fff9e9" stroke="#bda77f" stroke-width="2"/>
+  <text x="80" y="78" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="700" fill="#705334">MEDIUM</text>
+  <text x="80" y="96" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="700" fill="#705334">GRAIN RICE</text>
+  <path d="M54 107h52" stroke="#bda77f" stroke-width="2"/>
+  <text x="80" y="120" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#705334">5 kg</text>
+  <text x="80" y="151" text-anchor="middle" font-family="sans-serif" font-size="8" font-weight="700" fill="#59452e">DEMO ILLUSTRATION</text>
+</svg>

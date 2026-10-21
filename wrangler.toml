@@ -1,0 +1,12 @@
+name = "rec-swap"
+pages_build_output_dir = "."
+compatibility_date = "2026-10-21"
+
+[ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "rec-swap-feedback"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"

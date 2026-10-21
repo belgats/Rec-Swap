@@ -1,0 +1,32 @@
+{
+  "products": [
+    {"id":1,"n":"Baladna Fresh Full Fat Milk 1L","a":"dairy","c":"milk","b":"Baladna","p":6.5,"s":1000,"k":"carton","h":210,"t":["lactose","fresh","local"],"d":"fresh full fat cow milk produced in Qatar","st":50,"promo":false},
+    {"id":2,"n":"Baladna Low Fat Milk 1L","a":"dairy","c":"milk","b":"Baladna","p":6.5,"s":1000,"k":"carton","h":120,"t":["lactose","lowfat","local"],"d":"fresh low fat cow milk produced in Qatar","st":50,"promo":false},
+    {"id":3,"n":"Almarai Full Fat Milk 1L","a":"dairy","c":"milk","b":"Almarai","p":6,"s":1000,"k":"carton","h":205,"t":["lactose","fresh"],"d":"fresh full fat cow milk","st":50,"promo":false},
+    {"id":4,"n":"Almarai Lactose-Free Milk 1L","a":"dairy","c":"milk","b":"Almarai","p":8,"s":1000,"k":"carton","h":200,"t":["lactose-free","fresh"],"d":"lactose free cow milk easy to digest","st":50,"promo":false},
+    {"id":5,"n":"Oatly Barista Oat Drink 1L","a":"dairy","c":"milk","b":"Oatly","p":12,"s":1000,"k":"carton","h":45,"t":["lactose-free","vegan","plantbased"],"d":"plant based oat milk alternative","st":4,"promo":false},
+    {"id":6,"n":"Baladna Laban 1L","a":"dairy","c":"drink","b":"Baladna","p":5.5,"s":1000,"k":"bottle","h":190,"t":["lactose","local","fresh"],"d":"cultured buttermilk laban refreshing drink","st":50,"promo":false},
+    {"id":7,"n":"Almarai Greek Yogurt 400g","a":"dairy","c":"yogurt","b":"Almarai","p":7,"s":400,"k":"tub","h":30,"t":["lactose","protein"],"d":"thick greek yogurt high protein","st":50,"promo":false},
+    {"id":8,"n":"Baladna Natural Yogurt 500g","a":"dairy","c":"yogurt","b":"Baladna","p":5,"s":500,"k":"tub","h":215,"t":["lactose","local"],"d":"plain natural yogurt produced in Qatar","st":50,"promo":true},
+    {"id":9,"n":"India Gate Basmati Rice 5kg","a":"pantry","c":"rice","b":"India Gate","p":38,"s":5000,"k":"bag","h":40,"t":["basmati","premium"],"d":"aged long grain basmati rice","st":50,"promo":false},
+    {"id":10,"n":"Tilda Basmati Rice 5kg","a":"pantry","c":"rice","b":"Tilda","p":42,"s":5000,"k":"bag","h":35,"t":["basmati","premium"],"d":"long grain basmati rice fluffy","st":50,"promo":false},
+    {"id":11,"n":"Al Meera Medium Grain Rice 5kg","a":"pantry","c":"rice","b":"Al Meera","p":22,"s":5000,"k":"bag","h":50,"t":["value"],"d":"medium grain rice everyday value","st":50,"promo":false},
+    {"id":12,"n":"Khalas Dates 1kg","a":"pantry","c":"dates","b":"Al Meera","p":25,"s":1000,"k":"box","h":25,"t":["local","natural"],"d":"soft khalas dates from the Gulf","st":50,"promo":false},
+    {"id":13,"n":"Medjool Dates 500g","a":"pantry","c":"dates","b":"Date Farm","p":32,"s":500,"k":"box","h":20,"t":["premium","natural"],"d":"large soft medjool dates","st":8,"promo":false},
+    {"id":14,"n":"Karak Chai Instant 20 Sachets","a":"drinks","c":"tea","b":"Karak House","p":12,"s":400,"k":"box","h":30,"t":["sweet","milk"],"d":"instant karak tea with milk and cardamom","st":50,"promo":false},
+    {"id":15,"n":"Lipton Yellow Label Tea 100 Bags","a":"drinks","c":"tea","b":"Lipton","p":16,"s":200,"k":"box","h":50,"t":["classic"],"d":"black tea bags classic","st":50,"promo":false},
+    {"id":16,"n":"Arabic Coffee Cardamom 250g","a":"drinks","c":"coffee","b":"Al Ameed","p":20,"s":250,"k":"bag","h":25,"t":["local","cardamom"],"d":"gahwa arabic coffee with cardamom","st":50,"promo":false},
+    {"id":17,"n":"Rawdatain Water 12x500ml","a":"drinks","c":"water","b":"Rawdatain","p":9,"s":6000,"k":"pack","h":200,"t":["local"],"d":"still bottled drinking water from Qatar","st":50,"promo":false},
+    {"id":18,"n":"Masafi Water 12x500ml","a":"drinks","c":"water","b":"Masafi","p":10,"s":6000,"k":"pack","h":205,"t":["still"],"d":"still bottled drinking water","st":50,"promo":false},
+    {"id":19,"n":"San Pellegrino Sparkling 750ml","a":"drinks","c":"water","b":"S.Pellegrino","p":8,"s":750,"k":"bottle","h":150,"t":["sparkling","premium"],"d":"sparkling mineral water","st":6,"promo":false},
+    {"id":20,"n":"Rani Orange Juice 1L","a":"drinks","c":"juice","b":"Rani","p":7,"s":1000,"k":"carton","h":30,"t":["sugar"],"d":"orange fruit juice","st":50,"promo":false},
+    {"id":21,"n":"Almarai Orange Juice 1L","a":"drinks","c":"juice","b":"Almarai","p":6.5,"s":1000,"k":"carton","h":32,"t":["fresh"],"d":"fresh orange juice","st":50,"promo":true},
+    {"id":22,"n":"Almarai Apple Juice 1L","a":"drinks","c":"juice","b":"Almarai","p":6.5,"s":1000,"k":"carton","h":100,"t":["fresh"],"d":"fresh apple juice","st":50,"promo":false}
+  ],
+  "users": [
+    {"n":"Hamad · family, West Bay","h":[1,1,6,8,9,10,17,21],"ex":[]},
+    {"n":"Priya · fitness, Al Sadd","h":[7,2,5,15,13,19,9],"ex":[]},
+    {"n":"Ahmed · student, Education City","h":[3,11,15,17,20,6],"ex":[]},
+    {"n":"Sara · lactose intolerant, The Pearl","h":[4,5,16,19,22,12],"ex":["lactose"]}
+  ]
+}
