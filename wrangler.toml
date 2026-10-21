@@ -8,5 +8,5 @@ binding = "AI"
 [[d1_databases]]
 binding = "DB"
 database_name = "rec-swap-feedback"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id =  "050a5752-5e73-48fe-84c9-3d1771b091bf"
 migrations_dir = "migrations"
